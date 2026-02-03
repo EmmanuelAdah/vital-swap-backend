@@ -1,11 +1,9 @@
 import ApiError from '../utils/ApiError.js';
 
 export const globalErrorHandler = (err, req, res, next) => {
-    // Default values
-    err.statusCode = err.statusCode || 500;
-    err.status = err.status || 'error';
+    this.statusCode = err.statusCode || 500;
+    this.status = err.status || 'error';
 
-    // Only send stack trace in development
     if (process.env.NODE_ENV === 'development') {
         return res.status(err.statusCode).json({
             status: err.status,
@@ -15,7 +13,6 @@ export const globalErrorHandler = (err, req, res, next) => {
         });
     }
 
-    // Production: don't leak stack traces
     if (err.isOperational) {
         return res.status(err.statusCode).json({
             status: err.status,
@@ -23,7 +20,6 @@ export const globalErrorHandler = (err, req, res, next) => {
         });
     }
 
-    // Programming or unknown errors
     console.error('💥 ERROR:', err);
     res.status(500).json({
         status: 'error',
