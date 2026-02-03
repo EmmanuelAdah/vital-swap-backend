@@ -1,11 +1,9 @@
 import jwt from "jsonwebtoken";
 
-const secretKey = process.env.JWT_SECRET_KEY;
-
 export const generateTokens = (payload) => {
     return jwt.sign(
         payload,
-        secretKey,
+        process.env.JWT_SECRET_KEY,
         {
             expiresIn: '1d',
             issuer: 'Vital-Swap'
@@ -19,7 +17,7 @@ export const jwtFilter = (req, res, next) => {
     }
     try {
         const token = authHeader.split(' ')[1];
-        req.user  = jwt.verify(token, secretKey);
+        req.user  = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
         next()
     }catch(err) {

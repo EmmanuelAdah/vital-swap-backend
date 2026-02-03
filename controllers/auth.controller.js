@@ -4,7 +4,7 @@ import { generateTokens } from "../middlewares/jwt.middleware.js";
 import AppError from "../utils/ApiError.js";
 
 export const signUp = async (req, res) => {
-    const { firstName, lastName, email, role, password } = req.body;
+    const {firstName, lastName, email, role, password} = req.body;
     console.log('Here is your details: ' + req.body.email);
 
     const isValidInput = userSchema.validate(firstName, lastName, email, role, password);
@@ -18,19 +18,21 @@ export const signUp = async (req, res) => {
             role,
             password,
         });
-        const token = generateTokens({ id: savedUser._id, email: savedUser.email, role: savedUser.role });
 
-        res.status(201).json({
+        const token = generateTokens({id: savedUser._id, email: savedUser.email, role: savedUser.role});
+
+        return res.status(201).json({
             user: {
-            id: savedUser._id,
-            email: savedUser.email,
-            role: savedUser.role,
+                id: savedUser._id,
+                email: savedUser.email,
+                role: savedUser.role,
             },
-            token: token });
+            token: token
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Error creating user', error: error.message });
+        return res.status(400).json({message: error.message});
     }
-};
+}
 
 export const signIn = async (req, res) => {
     const { email, password } = req.body;
