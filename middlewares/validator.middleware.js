@@ -39,3 +39,21 @@ export const userSchema = Joi.object({
         .valid('customer', 'admin')
         .default('user')
 });
+
+
+export const accountSchema = Joi.object({
+      accountHolder: Joi.string()
+        .min(3)
+        .max(100)
+        .pattern(/^[a-zA-Z\s\-]+$/)
+        .required()
+        .messages({
+          'string.pattern.base': 'Account holder name contains invalid characters.'
+        }),
+
+      settlementType: Joi.string()
+        .required()
+        .messages({
+          'string.pattern.base': 'Settlement type must not be empty".'
+        }),
+});
