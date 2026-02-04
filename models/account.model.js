@@ -77,7 +77,7 @@ accountSchema.pre('save', async function(next) {
     next();
 });
 
-accountSchema.pre('findOneAndUpdate', async function(next) {
+accountSchema.pre('findOneAndUpdate', async function() {
     const update = this.getUpdate();
     if (update && update.isPrimary) {
         await this.model.updateMany(
@@ -85,10 +85,9 @@ accountSchema.pre('findOneAndUpdate', async function(next) {
             {$set: {isPrimary: false}}
         );
     }
-    next();
 });
 accountSchema.index(
     {accountNumber: 1, bankCode: 1},
     {unique: true});
 
-module.exports = mongoose.model('Account', accountSchema);
+export default mongoose.model('Account', accountSchema);

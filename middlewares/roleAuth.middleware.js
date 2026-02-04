@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 
 export const authorizeRoles = (...authorizedRoles) => {
     return (req, res, next) => {
