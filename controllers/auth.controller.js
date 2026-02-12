@@ -5,7 +5,7 @@ import AppError from "../utils/ApiError.js";
 
 export const signUp = async (req, res) => {
     const {firstName, lastName, email, role, password} = req.body;
-    console.log('Here is your details: ' + req.body.email);
+    console.log('Here is your details: ', email, ' ', password, ' ', firstName, ' ', lastName, ' ', role);
 
     const isValidInput = userSchema.validate(firstName, lastName, email, role, password);
     if (!isValidInput) throw new AppError('Invalid input', 400);
@@ -22,11 +22,7 @@ export const signUp = async (req, res) => {
         const token = generateTokens({id: savedUser._id, email: savedUser.email, role: savedUser.role});
 
         return res.status(201).json({
-            user: {
-                id: savedUser._id,
-                email: savedUser.email,
-                role: savedUser.role,
-            },
+            user: mapUserDetails(savedUser),
             token: token
         });
     } catch (error) {
@@ -34,26 +30,36 @@ export const signUp = async (req, res) => {
     }
 }
 
+    const mapUserDetails = (savedUser) => {
+           return {
+                id: savedUser._id,
+                email: savedUser.email,
+                name: savedUser.firstName + " " + savedUser.lastName,
+                role: savedUser.role,
+                imageUrl: savedUser.imageUrl
+            }
+    }
+
 export const signIn = async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({email}).select('+password');
 
-    if (user && (await user.matchPassword(password))) {
-        const payload = {
-            id: user._id,
-            email: user.email,
-            role: user.role
-        }
-        const token = generateTokens(payload);
-        return res.status(200).json({
-            user: {
+    try {
+        if (user && (await user.matchPassword(password))) {
+            const payload = {
                 id: user._id,
                 email: user.email,
                 role: user.role
-            },
-            token: token
-        });
-    } else {
-        throw new AppError('Invalid username or password', 400)
+            }
+            const token = generateTokens(payload);
+            return res.status(200).json({
+                user: mapUserDetails(user),
+                token: token
+            });
+        } else {
+            return res.status(400).json({message: 'Invalid username or password'})
+        }
+    }catch (e) {
+        return res.status(500).json({message: e.message});
     }
 }

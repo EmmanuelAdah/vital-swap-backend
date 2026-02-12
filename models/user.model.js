@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
         minlength: 6,
         select: false,
     },
+    imageUrl: {
+        type: String,
+        required: false
+    },
     accounts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Account"
@@ -51,7 +55,7 @@ const userSchema = new mongoose.Schema({
     });
 
     userSchema.methods.matchPassword = async function(enteredPassword) {
-        return await bcrypt.compare(enteredPassword, this.password);
+        return bcrypt.compare(enteredPassword, this.password);
     };
 
 

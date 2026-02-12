@@ -21,11 +21,17 @@ app.use(express.json())
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 
-mongoose.connect(process.env.MONGODB_URI).then(
-    () => console.log('MongoDB Connected to ' + mongoose.connection.name)
-).catch(err => console.log('Error occured connecting to mongoDB: ' + err.message));
+const DB_USER = process.env.MONGODB_USERNAME
+const DB_PASS = process.env.MONGODB_PASSWORD
+const DB_NAME = process.env.DB_NAME
 
-app.use(globalErrorHandler)
+const DATABASE_URL = `mongodb://${DB_USER}:${DB_PASS}@localhost:27017/${DB_NAME}?authSource=admin`
+
+mongoose.connect(DATABASE_URL)
+    .then(
+    () => console.log('MongoDB Connected to ' + mongoose.connection.name)
+).catch(err => console.log('Error occurred connecting to mongoDB: ' + err.message));
+
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
     next();
@@ -53,6 +59,8 @@ app.get("/health", async (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/accounts', accountRouter);
+
+app.use(globalErrorHandler)
 
 app.listen(PORT, () => {
     console.log('Server is running on port: ' + PORT)
