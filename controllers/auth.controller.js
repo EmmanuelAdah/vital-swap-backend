@@ -5,7 +5,6 @@ import AppError from "../utils/ApiError.js";
 
 export const signUp = async (req, res) => {
     const {firstName, lastName, email, role, password} = req.body;
-    console.log('Here is your details: ', email, ' ', password, ' ', firstName, ' ', lastName, ' ', role);
 
     const isValidInput = userSchema.validate(firstName, lastName, email, role, password);
     if (!isValidInput) throw new AppError('Invalid input', 400);
