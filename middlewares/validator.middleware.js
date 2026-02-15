@@ -28,9 +28,9 @@ export const userSchema = Joi.object({
     password: Joi.string()
         .min(6)
         .max(128)
-        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/)
         .messages({
-            'string.pattern.base': 'Password must be at least 8 characters, include an uppercase letter, a number, and a special character.',
+            'string.pattern.base': 'Password must be between 8 to 20 characters, include an uppercase letter, a number, and a special character.',
             'string.min': 'Password should be at least 8 characters long.'
         })
         .required(),

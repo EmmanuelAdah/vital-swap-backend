@@ -9,7 +9,7 @@ const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // last for 2 days
 export const createAccount = async (req, res) => {
     const {userId, accountNumber, accountHolder, bankName, currency, settlementType} = req.body
     try {
-        const bankDetails = await fetchBankDetails(bankName);
+        const [bankDetails] = await Promise.all([fetchBankDetails(bankName)]);
         if (!bankDetails) {
             return res.status(400).json({message: 'Invalid bank name'});
         }
@@ -18,7 +18,6 @@ export const createAccount = async (req, res) => {
             return res.status(400).json({message: 'Invalid account number'});
         }
         const accountName = isVerified.data.account_name || accountHolder.trim().toUpperCase();
-
 
             const createdAccount = await Account.create({
                 userId,
@@ -44,7 +43,7 @@ export const updateAccount = async (req, res) => {
     const { id } = req.params;
     const { accountHolder, settlementType, currency } = req.body;
 
-    const {error} = accountSchema.validate(accountHolder, settlementType, currency);
+    const {error} = accountSchema.validate({accountHolder, settlementType, currency});
     if (error) return res.status(400).json({ message: error.message });
 
     try {

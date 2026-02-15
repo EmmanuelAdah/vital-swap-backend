@@ -5,14 +5,14 @@ const userSchema = new mongoose.Schema({
     id: mongoose.Schema.Types.ObjectId,
     firstName: {
         type: String,
-        toUpperCase: true,
+        set: name => name.toUpperCase(),
         required: [true, 'First name is required'],
         trim: true,
         maxlength: 50
     },
     lastName: {
         type: String,
-        toUpperCase: true,
+        set: name => name.toUpperCase(),
         required: [true, 'Last name is required'],
         trim: true,
         maxlength: 50
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["ADMIN", "USER", "PUBLISHER"],
+        enum: ["ADMIN", "USER"],
         default: "USER",
         uppercase: true
     },
@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Password is required'],
         minlength: 6,
         select: false,
+    },
+    imageUrl: {
+        type: String,
+        required: false
     },
     accounts: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -51,7 +55,7 @@ const userSchema = new mongoose.Schema({
     });
 
     userSchema.methods.matchPassword = async function(enteredPassword) {
-        return await bcrypt.compare(enteredPassword, this.password);
+        return bcrypt.compare(enteredPassword, this.password);
     };
 
 
