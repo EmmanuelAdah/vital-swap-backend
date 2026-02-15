@@ -33,7 +33,7 @@ export const signUp = async (req, res) => {
            return {
                 id: savedUser._id,
                 email: savedUser.email,
-                name: savedUser.firstName + " " + savedUser.lastName,
+                name: savedUser.firstName + " "+ savedUser.lastName,
                 role: savedUser.role,
                 imageUrl: savedUser.imageUrl
             }
